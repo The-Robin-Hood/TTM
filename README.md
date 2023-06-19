@@ -1,5 +1,5 @@
 <div align="center">
-<img src="/logo.svg" width="50%"></img>
+<img src="logo.png"></img>
 <br/><br/>
 <i>Made for developers by a developer.</i>
 </div>
