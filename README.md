@@ -1,9 +1,11 @@
-<div style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;gap: 2rem;margin: 2rem 0;">
+<div align="center">
 <img src="/logo.svg" width="50%"></img>
+<br/><br/>
 <i>Made for developers by a developer.</i>
 </div>
+<br/>
 
-Terminal TOTP Manager is a command-line tool for managing Time-based One-Time Passwords (TOTPs). It allows you to securely store and generate TOTPs for your various accounts.
+Terminal TOTP Manager is a command-line tool for managing Time-based One-Time Passwords (TOTPs). <br/>It allows you to securely store and generate TOTPs for your various accounts.
 
 ## Prerequisites
 
