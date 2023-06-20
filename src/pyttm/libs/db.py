@@ -36,16 +36,14 @@ class JsonDB:
         self.write_data()
     
     def add_creds(self, creds,password):
-        secret_key = password.zfill(16)
-        creds['seed'] = encrypt_text(creds['seed'], secret_key)
+        creds['seed'] = encrypt_text(creds['seed'], password)
         self.data["credentials"].append(creds)
         self.write_data()
     
     def get_creds(self,password):
-        secret_key = password.zfill(16)
         creds = copy.deepcopy(self.data["credentials"])
         for cred in creds:
-            cred['seed'] = decrypt_text(cred['seed'], secret_key)
+            cred['seed'] = decrypt_text(cred['seed'], password)
         return creds
     
     def delete_creds(self, cred):
