@@ -7,7 +7,7 @@ def docs_read(fname):
 
 setup(
     name='pyttm',
-    version='0.0.3',
+    version='0.0.4',
     description='A simple Terminal based TOTP manager',
     long_description=(docs_read('README.md')),
     long_description_content_type='text/markdown',

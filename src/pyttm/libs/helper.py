@@ -103,7 +103,7 @@ def display_banner():
 |   |_|     |_|   |_|  |_| |
 |                          |  
 |   Terminal TOTP Manager  |
-|      version : 0.0.3     |
+|      version : 0.0.4     |
  --------------------------
 """)    
 
