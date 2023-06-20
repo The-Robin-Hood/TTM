@@ -22,9 +22,9 @@ Terminal TOTP Manager is a command-line tool for managing Time-based One-Time Pa
 
 To use TOTP Manager, follow these steps:
 
-    1. Open a terminal or command prompt and navigate to the project directory.
+1. Open a terminal or command prompt and navigate to the project directory.
 
-    2. Run the following command:
+2. Run the following command:
 
    ```
    ttm [command]
