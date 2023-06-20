@@ -1,11 +1,11 @@
 import os
 import json
 import copy
-from crypto_utils import encrypt_text, decrypt_text
+from pyttm.libs.crypto import encrypt_text, decrypt_text
 
 class JsonDB:
     def __init__(self, file_path):
-        self.file_path = os.path.abspath(file_path)
+        self.file_path = os.path.dirname(os.path.abspath(__file__)) + "/" + file_path
         self.data = self.read_data()
 
     def create_file(self):
@@ -51,3 +51,5 @@ class JsonDB:
     def delete_creds(self, cred):
         del self.data["credentials"][cred]
         self.write_data()
+
+json_db = JsonDB("../db.json")

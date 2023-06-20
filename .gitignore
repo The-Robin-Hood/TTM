@@ -3,4 +3,6 @@ __pycache__/
 *.py[cod]
 test_*.py
 db.json
+pyttm.egg-info/
+dist/
 ```

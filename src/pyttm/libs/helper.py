@@ -1,12 +1,12 @@
-import sys
-from crypto_utils import *
-from utils import *
-from db import JsonDB
-from totp import TOTPGenerator
+import os
+import urllib.parse
 from time import sleep
+from pyttm.libs.crypto import *
+from pyttm.libs.totp import TOTPGenerator
+from pyttm.libs.db import json_db
 
 def get_password():
-    password = DB.get_password()
+    password = json_db.get_password()
     if password == "":
         print("Welcome to TOTP Manager!\n")
         print("Create a password to secure your credentials.")
@@ -22,11 +22,11 @@ def get_password():
             else:
                 clear()
                 print("Password does not match!")
-        DB.set_password(hash_password(password))
+        json_db.set_password(hash_password(password))
     else :
         while True:
             password = input("Enter password: ")
-            if validate_password(password,DB.get_password()):
+            if validate_password(password,json_db.get_password()):
                 break   
             else:
                 clear()
@@ -39,13 +39,13 @@ def add_creds(password):
                 totp_info = extract_info_from_otpauth_uri(link)
     else:
         totp_info = gather_info_from_user()
-    DB.add_creds(totp_info,password)
+    json_db.add_creds(totp_info,password)
     print("\nAdded Successfully!")
 
 def list_creds(password):
     while True:
         clear()
-        creds = DB.get_creds(password)
+        creds = json_db.get_creds(password)
         if len(creds) == 0:
             print("No Credentials Found!")
             if(input("Do you want to add? (y/n): ") in ["y","Y"]):
@@ -65,7 +65,7 @@ def list_creds(password):
 
 def delete_creds(password):
     clear()
-    creds = DB.get_creds(password)
+    creds = json_db.get_creds(password)
     if len(creds) == 0:
         print("No Credentials Found!")
         if(input("Do you want to add? (y/n): ") in ["y","Y"]):
@@ -80,39 +80,70 @@ def delete_creds(password):
             print("Invalid choice!")
             exit()
         if(input(f"Are you sure you want to delete {creds[choice-1]['issuer']}? (y/n): ") in ["y","Y"]):
-            DB.delete_creds(choice-1)
+            json_db.delete_creds(choice-1)
             print("Deleted Successfully!")
         else:
             print("Aborted!")
             exit()
 
+def clear():
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
+    display_banner()
 
-if __name__ == "__main__": 
-    try:
-        clear()  
-        command_line_args = sys.argv[1:]
-        if len(command_line_args) == 0 or command_line_args[0] not in ["add","list","delete"]:
-            print("Usage: python3 app.py add|list|delete\n")
-            exit()
-        
-        DB = JsonDB("db.json")
-        password = get_password()        
-        command = command_line_args[0]
+def display_banner():
+    print("""
+ -------------------------- 
+|  _____   _____   __  __  |
+| |_   _| |_   _| |  \/  | |
+|   | |     | |   | |\/| | |
+|   | |     | |   | |  | | |
+|   |_|     |_|   |_|  |_| |
+|                          |  
+|   Terminal TOTP Manager  |
+|      version : 0.0.3     |
+ --------------------------
+""")    
 
-        if command == "add":
-            add_creds(password)
-        elif command == "list":
-            list_creds(password)
-        elif command == "delete":
-            delete_creds(password)
+def extract_info_from_otpauth_uri(uri):
+    parsed_uri = urllib.parse.urlparse(uri)
 
-    except KeyboardInterrupt:
-        print("\nExiting...")
-        exit()
-    except ValueError:
-        print("Invalid input!")
-        exit()
-    except Exception as e:
-        print("Error! Facing Issue, Please Report!")
-        print(e)
-        exit()
+    if parsed_uri.scheme != "otpauth" or parsed_uri.netloc != "totp":
+        raise ValueError("Invalid OTPAuth URI")
+
+    label = parsed_uri.path.strip('/')
+    query_params = urllib.parse.parse_qs(parsed_uri.query)
+
+
+    if 'secret' not in query_params:
+        raise ValueError("Secret parameter not found in OTPAuth URI")
+
+    secret = query_params['secret'][0]
+    algorithm = query_params['algorithm'][0] if 'algorithm' in query_params else 'sha1'
+    digits = query_params['digits'][0] if 'digits' in query_params else 6
+    period = query_params['period'][0] if 'period' in query_params else 30
+    label = query_params['issuer'][0]+" "+label if 'issuer' in query_params else label
+
+    return {'issuer': label, 'seed': secret, 'algorithm': algorithm, 'digits': digits, 'period': period}
+
+def gather_info_from_user():
+    issuer = input("Enter issuer: ")
+    seed = input("Enter seed: ")
+    algorithm = input("Enter algorithm (Default: sha1): ")
+    digits = input("Enter digits (Default: 6): ")
+    period = input("Enter period (Default: 30): ")
+    if algorithm == "":
+        algorithm = "sha1"
+    if digits == "":
+        digits = 6
+    if period == "":
+        period = 30
+    return {
+        "issuer": issuer,
+        "seed": seed,
+        "algorithm": algorithm,
+        "digits": digits,
+        "period": period
+    }

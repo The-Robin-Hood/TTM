@@ -1,5 +1,5 @@
 <div align="center">
-<img src="logo.png"></img>
+<img src="https://raw.githubusercontent.com/The-Robin-Hood/TTM/main/assets/logo.png"></img>
 <br/><br/>
 
 <b><i>Made for developers by a developer ♥</i></b> 
@@ -11,14 +11,11 @@ Terminal TOTP Manager is a command-line tool for managing Time-based One-Time Pa
 ## Prerequisites
 
 - Python 3.x
-- Required dependencies: `pycryptodome`
 
 ## Installation
 
-1. Clone the repository or download the source code.
-2. Install the required dependencies by running the following command:
    ```
-   pip install pycryptodome
+   pip install pyttm
    ```
 
 ## Usage
@@ -30,7 +27,7 @@ To use TOTP Manager, follow these steps:
     2. Run the following command:
 
    ```
-   python app.py [command]
+   ttm [command]
    ```
 
    Replace `[command]` with one of the following options:
