@@ -1,7 +1,8 @@
 <div align="center">
 <img src="logo.png"></img>
 <br/><br/>
-<i>Made for developers by a developer.</i>
+
+<b><i>Made for developers by a developer ♥</i></b> 
 </div>
 <br/>
 
