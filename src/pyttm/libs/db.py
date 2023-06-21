@@ -91,8 +91,6 @@ class SQLiteDB:
     def add_creds(self, creds: Credentials, password: str):
         with sqlite3.connect(self.config_db) as connection:
             cursor = connection.cursor()
-            with open('log.txt', 'a') as f:
-                f.write(f'{creds["seed"]}, {password}')
             encrypted_seed = encrypt_text(creds['seed'], password)
             cursor.execute("INSERT INTO Credentials (issuer, seed, algorithm, digits, period) VALUES (?, ?, ?, ?, ?)",
                            (creds['issuer'], encrypted_seed, creds['algorithm'], creds['digits'], creds['period']))
