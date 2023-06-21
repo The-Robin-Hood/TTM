@@ -102,19 +102,3 @@ class SQLiteDB:
 
 
 ConfigDB = SQLiteDB()
-
-if __name__ == '__main__':
-    ConfigDB.create_table()
-    print(ConfigDB.password_hash)
-    ConfigDB.password_hash = "test0"
-    ConfigDB.password_hash = "test1"
-    ConfigDB.password_hash = "test2"
-    print(ConfigDB.password_hash)
-    ConfigDB.credentials = {
-        "issuer": "test",
-        "seed": "I65VU7K5ZQL7WB4E",
-        "algorithm": "sha1",
-        "digits": 6,
-        "period": 30
-    }
-    print(ConfigDB.credentials)
