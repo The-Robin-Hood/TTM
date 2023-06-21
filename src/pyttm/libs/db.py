@@ -1,53 +1,104 @@
 import os
-import json
-import copy
-from pyttm.libs.crypto import encrypt_text, decrypt_text
+from pathlib import Path
+import sqlite3
+from typing import Optional, TypedDict
 
-class JsonDB:
-    def __init__(self, file_path):
-        self.file_path = os.path.dirname(os.path.abspath(__file__)) + "/" + file_path
-        self.data = self.read_data()
+from pyttm.libs.crypto import decrypt_text, encrypt_text
 
-    def create_file(self):
-        with open(self.file_path, 'w') as file:
-            json.dump({
-                "password": "",
-                "credentials": []
-            }, file, indent=4)
-    
-    def read_data(self):
-        try:
-            with open(self.file_path, 'r') as file:
-                data = json.load(file)
-                return data
-        except FileNotFoundError:
-            self.create_file()
-            return self.read_data()
 
-    def write_data(self):
-        with open(self.file_path, 'w') as file:
-            json.dump(self.data, file, indent=4)
+class Credentials(TypedDict):
+    issuer: str
+    seed: str
+    algorithm: str
+    digits: int
+    period: int
 
-    def get_password(self):
-        return self.data["password"]
-    
-    def set_password(self, password):
-        self.data["password"] = password
-        self.write_data()
-    
-    def add_creds(self, creds,password):
-        creds['seed'] = encrypt_text(creds['seed'], password)
-        self.data["credentials"].append(creds)
-        self.write_data()
-    
-    def get_creds(self,password):
-        creds = copy.deepcopy(self.data["credentials"])
-        for cred in creds:
-            cred['seed'] = decrypt_text(cred['seed'], password)
-        return creds
-    
-    def delete_creds(self, cred):
-        del self.data["credentials"][cred]
-        self.write_data()
 
-json_db = JsonDB("../db.json")
+class SQLiteDB:
+    def __init__(self):
+        self.create_table()
+
+    @property
+    def ttm_dir(self):
+        if os.name == 'nt':
+            config_dir = os.environ.get(
+                'APPDATA', Path.home().joinpath('AppData', 'Roaming'))
+
+        elif os.name == 'posix':
+            config_dir = os.environ.get(
+                'XDG_CONFIG_HOME', Path.home().joinpath('.config'))
+
+        else:
+            config_dir = Path(__file__).parent.parent
+
+        return Path(config_dir).joinpath('ttm')
+
+    @property
+    def config_db(self):
+        os.makedirs(self.ttm_dir, exist_ok=True)
+        return Path(self.ttm_dir).joinpath('config.db')
+
+    def create_table(self):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute('''CREATE TABLE IF NOT EXISTS Password (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                password TEXT
+            )''')
+
+            cursor.execute('''CREATE TABLE IF NOT EXISTS Credentials (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                issuer TEXT,
+                seed TEXT,
+                algorithm TEXT,
+                digits INTEGER,
+                period INTEGER
+            )''')
+
+    @property
+    def password_hash(self) -> Optional[str]:
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT password FROM Password ORDER BY id DESC")
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+
+    @password_hash.setter
+    def password_hash(self, password: str):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                "INSERT INTO Password (password) VALUES (?)", (password,))
+
+    def get_creds(self, password: str):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM Credentials")
+            rows = cursor.fetchall()
+            creds = []
+            for row in rows:
+                cred = {
+                    'issuer': row[1],
+                    'seed': decrypt_text(row[2], password),
+                    'algorithm': row[3],
+                    'digits': row[4],
+                    'period': row[5]
+                }
+                creds.append(cred)
+            return creds
+
+    def add_creds(self, creds: Credentials, password: str):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            encrypted_seed = encrypt_text(creds['seed'], password)
+            cursor.execute("INSERT INTO Credentials (issuer, seed, algorithm, digits, period) VALUES (?, ?, ?, ?, ?)",
+                           (creds['issuer'], encrypted_seed, creds['algorithm'], creds['digits'], creds['period']))
+
+    def delete_cred(self, cred_id: int):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute("DELETE FROM Credentials WHERE id=?", (cred_id,))
+
+
+ConfigDB = SQLiteDB()
