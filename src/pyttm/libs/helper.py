@@ -7,8 +7,8 @@ from pyttm.libs.totp import TOTPGenerator
 
 
 def get_password():
-    password = ConfigDB.password
-    if not password:
+    password_hash = ConfigDB.password_hash
+    if not password_hash:
         print("Welcome to TOTP Manager!\n")
         print("Create a password to secure your credentials.")
         while True:
@@ -23,11 +23,11 @@ def get_password():
             else:
                 clear()
                 print("Password does not match!")
-        ConfigDB.password = hash_password(password)
+        ConfigDB.password_hash = hash_password(password)
     else:
         while True:
             password = input("Enter password: ")
-            if validate_password(password, ConfigDB.password):
+            if validate_password(password, ConfigDB.password_hash):
                 break
             else:
                 clear()

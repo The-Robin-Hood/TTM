@@ -56,7 +56,7 @@ class SQLiteDB:
             )''')
 
     @property
-    def password(self) -> Optional[str]:
+    def password_hash(self) -> Optional[str]:
         with sqlite3.connect(self.config_db) as connection:
             cursor = connection.cursor()
             cursor.execute("SELECT password FROM Password ORDER BY id DESC")
@@ -64,8 +64,8 @@ class SQLiteDB:
             if result:
                 return result[0]
 
-    @password.setter
-    def password(self, password: str):
+    @password_hash.setter
+    def password_hash(self, password: str):
         with sqlite3.connect(self.config_db) as connection:
             cursor = connection.cursor()
             cursor.execute(
@@ -105,11 +105,11 @@ ConfigDB = SQLiteDB()
 
 if __name__ == '__main__':
     ConfigDB.create_table()
-    print(ConfigDB.password)
-    ConfigDB.password = "test0"
-    ConfigDB.password = "test1"
-    ConfigDB.password = "test2"
-    print(ConfigDB.password)
+    print(ConfigDB.password_hash)
+    ConfigDB.password_hash = "test0"
+    ConfigDB.password_hash = "test1"
+    ConfigDB.password_hash = "test2"
+    print(ConfigDB.password_hash)
     ConfigDB.credentials = {
         "issuer": "test",
         "seed": "I65VU7K5ZQL7WB4E",
