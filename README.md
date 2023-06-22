@@ -46,7 +46,7 @@ To use TOTP Manager, follow these steps:
 
 ## Security
 
-- The TOTP Manager stores your credentials securely by hashing the password before storing it in a JSON file (`db.json`).
+- The TOTP Manager stores your credentials securely by hashing the password before storing it in a DB file (`config.db`) at `ttm` folder `%APPDATA%` or `XDG_CONFIG_HOME` depending on OS.
 - You can only access the TOTP Manager by providing the correct password.
 
 ## Contributing
