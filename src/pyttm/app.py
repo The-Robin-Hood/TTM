@@ -8,6 +8,7 @@ from pyttm.libs.crypto import *
 def main():
     try:
         clear()
+        check_for_updates()
         command_line_args = sys.argv[1:]
         if len(command_line_args) == 0 or command_line_args[0] not in ["add", "list", "delete"]:
             print("Usage: ttm add|list|delete\n")

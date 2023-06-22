@@ -1,6 +1,9 @@
 import os
 import urllib.parse
+import requests
+import pkg_resources
 from time import sleep
+from datetime import datetime
 from pyttm.libs.db import ConfigDB
 from pyttm.libs.crypto import *
 from pyttm.libs.totp import TOTPGenerator
@@ -155,3 +158,19 @@ def gather_info_from_user():
         "digits": digits,
         "period": period
     }
+
+def check_for_updates():
+    last_checked = ConfigDB.get_last_check()
+    if last_checked:
+        if (datetime.now() - datetime.strptime(last_checked, "%Y-%m-%d %H:%M:%S.%f")).days < 1:
+            return
+    ConfigDB.set_last_check(datetime.now())
+    try:
+        fetch = requests.get("https://pypi.org/pypi/pyttm/json")
+        latest_version = fetch.json()["info"]["version"]
+        current_version = pkg_resources.get_distribution("pyttm").version
+        if latest_version != current_version :
+            print(f"\nUpdate available: {latest_version}")
+            print("Run 'pip install --upgrade pyttm' to update\n")
+    except:
+        pass

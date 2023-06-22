@@ -46,6 +46,11 @@ class SQLiteDB:
                 password TEXT
             )''')
 
+            cursor.execute('''CREATE TABLE IF NOT EXISTS Version (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                last_check DATETIME
+            )''')
+
             cursor.execute('''CREATE TABLE IF NOT EXISTS Credentials (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 issuer TEXT,
@@ -100,5 +105,17 @@ class SQLiteDB:
             cursor = connection.cursor()
             cursor.execute("DELETE FROM Credentials WHERE id=?", (cred_id,))
 
+    def get_last_check(self):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT last_check FROM Version ORDER BY id DESC")
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+        
+    def set_last_check(self, last_check: str):
+        with sqlite3.connect(self.config_db) as connection:
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO Version (last_check) VALUES (?)", (last_check,))
 
 ConfigDB = SQLiteDB()
