@@ -1,5 +1,6 @@
 import os
 from getpass import getpass
+import sys
 from typing import Final
 import urllib.parse
 import requests
@@ -62,7 +63,7 @@ def list_creds(password):
             if (input("Do you want to add? (y/n): ") in ["y", "Y"]):
                 add_creds(password)
                 break
-            exit()
+            sys.exit()
         
         max_key_length = max(len(cred["issuer"]) for cred in creds)
         
@@ -87,7 +88,7 @@ def delete_creds(password):
         print("No Credentials Found!")
         if (input("Do you want to add? (y/n): ") in ["y", "Y"]):
             add_creds(password)
-        exit()
+        sys.exit()
     else:
         print(f'Issuer\n{"-" * 6}')
         for index, cred in enumerate(creds):
@@ -95,13 +96,13 @@ def delete_creds(password):
         choice = int(input("\nChoose the Issuer to delete: "))
         if choice > len(creds) or choice < 1:
             print("Invalid choice!")
-            exit()
+            sys.exit()
         if (input(f"Are you sure you want to delete {creds[choice-1]['issuer']}? (y/n): ") in ["y", "Y"]):
             ConfigDB.delete_cred(choice)
             print("Deleted Successfully!")
         else:
             print("Aborted!")
-            exit()
+            sys.exit()
 
 
 def clear():

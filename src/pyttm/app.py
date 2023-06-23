@@ -12,7 +12,7 @@ def main():
         command_line_args = sys.argv[1:]
         if len(command_line_args) == 0 or command_line_args[0] not in ["add", "list", "delete"]:
             print("Usage: ttm add|list|delete\n")
-            exit()
+            sys.exit()
 
         password = get_password()
         command = command_line_args[0]
@@ -26,14 +26,14 @@ def main():
 
     except KeyboardInterrupt:
         print("\nExiting...")
-        exit()
+        sys.exit()
     except ValueError:
         print("Invalid input!")
-        exit()
+        sys.exit()
     except Exception as e:
         print("Error! Facing Issue, Please Report!")
         print(e)
-        exit()
+        sys.exit()
 
 
 if __name__ == "__main__":
