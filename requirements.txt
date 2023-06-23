@@ -1,6 +1,11 @@
+altgraph==0.17.3
 certifi==2023.5.7
 charset-normalizer==3.1.0
 idna==3.4
+pefile==2023.2.7
 pycryptodome==3.18.0
+pyinstaller==5.12.0
+pyinstaller-hooks-contrib==2023.3
+pywin32-ctypes==0.2.1
 requests==2.31.0
 urllib3==2.0.3
