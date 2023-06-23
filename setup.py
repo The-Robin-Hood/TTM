@@ -23,7 +23,7 @@ setup(
     packages=find_packages(where='src',include=['pyttm','pyttm.*']),
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=['pycryptodome'],
+    install_requires=['pycryptodome', 'requests'],
     keywords='totp,otp,encryption,decryption,AES256,crypto,security,privacy',
         classifiers=[
         'Intended Audience :: Developers',
