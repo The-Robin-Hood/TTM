@@ -1,13 +1,16 @@
 import os
+from getpass import getpass
+from typing import Final
 import urllib.parse
 import requests
 import pkg_resources
 from time import sleep
 from datetime import datetime
-from pyttm.libs.db import ConfigDB
-from pyttm.libs.crypto import *
+from pyttm.libs.db import SQLiteDB
+import pyttm.libs.crypto as crypto
 from pyttm.libs.totp import TOTPGenerator
 
+ConfigDB: Final = SQLiteDB()
 
 def get_password():
     password_hash = ConfigDB.password_hash
@@ -15,22 +18,22 @@ def get_password():
         print("Welcome to TOTP Manager!\n")
         print("Create a password to secure your credentials.")
         while True:
-            password = input("\nPassword: ")
+            password = getpass("\nPassword: ")
             if (len(password) < 8):
                 clear()
                 print("Password must be at least 8 characters!")
                 continue
-            confirm_password = input("Confirm password: ")
+            confirm_password = getpass("Confirm password: ")
             if password == confirm_password:
                 break
             else:
                 clear()
                 print("Password does not match!")
-        ConfigDB.password_hash = hash_password(password)
+        ConfigDB.password_hash = crypto.hash_password(password)
     else:
         while True:
-            password = input("Enter password: ")
-            if validate_password(password, ConfigDB.password_hash):
+            password = getpass("Enter password: ")
+            if crypto.validate_password(password, ConfigDB.password_hash):
                 break
             else:
                 clear()
@@ -44,6 +47,7 @@ def add_creds(password):
         totp_info = extract_info_from_otpauth_uri(link)
     else:
         totp_info = gather_info_from_user()
+    
     ConfigDB.add_creds(totp_info, password)
     print("\nAdded Successfully!")
 
@@ -52,20 +56,25 @@ def list_creds(password):
     while True:
         clear()
         creds = ConfigDB.get_creds(password)
-        if len(creds) == 0:
+        
+        if not len(creds):
             print("No Credentials Found!")
             if (input("Do you want to add? (y/n): ") in ["y", "Y"]):
                 add_creds(password)
                 break
             exit()
+        
         max_key_length = max(len(cred["issuer"]) for cred in creds)
+        
         print(f"Issuer{' '*(max_key_length-5)}    OTP     Time")
         print("-"*(max_key_length+19))
+        
         for cred in creds:
             i = TOTPGenerator(**cred)
             padding = ' ' * (max_key_length - len(cred["issuer"]))
             print(
                 f"{cred['issuer']}{padding}    {i.generateTOTP()}    {i.get_remaining_time()}")
+        
         print("\n\nPress Ctrl+C to exit")
         sleep(1)
         print("\n")
