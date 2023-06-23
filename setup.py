@@ -6,12 +6,12 @@ def docs_read(fname):
     f = open(Path(__file__).parent.joinpath(fname)).read()
     return f.replace('â™¥', '♥')
 
-def read_smver():
+def read_semver():
     return open(Path(__file__).parent.joinpath('src','pyttm','version.txt')).read().strip()
 
 setup(
     name='pyttm',
-    version=read_smver(),
+    version=read_semver(),
     description='A simple Terminal based TOTP manager',
     long_description=(docs_read('README.md')),
     long_description_content_type='text/markdown',
