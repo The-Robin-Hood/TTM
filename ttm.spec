@@ -3,10 +3,10 @@
 
 block_cipher = None
 
-version = open('src\\pyttm\\version.txt').read().strip()
+version = open('src/pyttm/version.txt').read().strip()
 
 a = Analysis(
-    ['src\\pyttm\\app.py'],
+    ['src/pyttm/app.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -42,5 +42,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['assets\\logo.ico'],
+    icon=['assets/logo.ico'],
 )
