@@ -10,7 +10,7 @@ from datetime import datetime
 from pyttm.libs.db import SQLiteDB
 import pyttm.libs.crypto as crypto
 from pyttm.libs.totp import TOTPGenerator
-
+from pyttm import __version__ as ver
 ConfigDB: Final = SQLiteDB()
 
 def get_password():
@@ -114,7 +114,7 @@ def clear():
 
 
 def display_banner():
-    print("""
+    print(f"""
  -------------------------- 
 |  _____   _____   __  __  |
 | |_   _| |_   _| |  \/  | |
@@ -123,7 +123,7 @@ def display_banner():
 |   |_|     |_|   |_|  |_| |
 |                          |  
 |   Terminal TOTP Manager  |
-|      version : 0.1.0     |
+|      version : {ver}     |
  --------------------------
 """)
 

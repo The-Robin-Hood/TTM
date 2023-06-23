@@ -1,13 +1,17 @@
+from pathlib import Path
 from setuptools import setup , find_packages
 import os
 
 def docs_read(fname):
-    f = open(os.path.join(os.path.dirname(__file__), fname)).read()
+    f = open(Path(__file__).parent.joinpath(fname)).read()
     return f.replace('â™¥', '♥')
+
+def read_smver():
+    return open(Path(__file__).parent.joinpath('src','pyttm','version.txt')).read().strip()
 
 setup(
     name='pyttm',
-    version='0.1.0',
+    version=read_smver(),
     description='A simple Terminal based TOTP manager',
     long_description=(docs_read('README.md')),
     long_description_content_type='text/markdown',
@@ -22,6 +26,7 @@ setup(
     },
     packages=find_packages(where='src',include=['pyttm','pyttm.*']),
     package_dir={'': 'src'},
+    data_files=[("data", ["src/pyttm/version.txt"])],
     include_package_data=True,
     install_requires=['pycryptodome', 'requests'],
     keywords='totp,otp,encryption,decryption,AES256,crypto,security,privacy',

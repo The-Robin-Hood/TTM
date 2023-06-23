@@ -3,6 +3,7 @@
 
 block_cipher = None
 
+version = open('src\\pyttm\\version.txt').read().strip()
 
 a = Analysis(
     ['src\\pyttm\\app.py'],
@@ -28,7 +29,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='ttm',
+    name=f'ttm-{version}',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -37,7 +38,7 @@ exe = EXE(
     runtime_tmpdir=None,
     console=True,
     disable_windowed_traceback=False,
-    argv_emulation=False,
+    argv_emulation=True,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
