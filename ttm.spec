@@ -1,9 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+import re
 
 block_cipher = None
 
-version = open('src/pyttm/version.txt').read().strip()
+version = re.search(r'__version__ = "(.*?)"', open('src/pyttm/__init__.py').read()).group(1)
 
 a = Analysis(
     ['src/pyttm/app.py'],
