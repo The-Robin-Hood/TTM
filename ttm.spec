@@ -9,7 +9,7 @@ a = Analysis(
     ['src/pyttm/app.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('src/pyttm/version.txt', 'pyttm')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

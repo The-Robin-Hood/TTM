@@ -178,8 +178,7 @@ def check_for_updates():
     try:
         fetch = requests.get("https://pypi.org/pypi/pyttm/json")
         latest_version = fetch.json()["info"]["version"]
-        current_version = pkg_resources.get_distribution("pyttm").version
-        if latest_version != current_version :
+        if latest_version != ver :
             print(f"\nUpdate available: {latest_version}")
             print("Run 'pip install --upgrade pyttm' to update\n")
     except:
