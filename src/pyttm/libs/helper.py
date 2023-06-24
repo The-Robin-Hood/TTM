@@ -4,9 +4,9 @@ import sys
 from typing import Final
 import urllib.parse
 import requests
-import pkg_resources
 from time import sleep
 from datetime import datetime
+from pyttm.libs import SemVer
 from pyttm.libs.db import SQLiteDB
 import pyttm.libs.crypto as crypto
 from pyttm.libs.totp import TOTPGenerator
@@ -177,9 +177,10 @@ def check_for_updates():
     ConfigDB.set_last_check(datetime.now())
     try:
         fetch = requests.get("https://pypi.org/pypi/pyttm/json")
-        latest_version = fetch.json()["info"]["version"]
-        if latest_version != ver :
+        latest_version = SemVer(fetch.json()["info"]["version"])
+        if latest_version > SemVer(ver):
             print(f"\nUpdate available: {latest_version}")
-            print("Run 'pip install --upgrade pyttm\nor\ndownload the latest binary from release' to update\n")
+            print("Run 'pip install --upgrade pyttm'\nor\nDownload the latest binary from release to update\n")
     except:
         pass
+

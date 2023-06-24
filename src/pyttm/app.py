@@ -3,7 +3,7 @@
 import sys
 from pyttm.libs.helper import *
 from pyttm.libs.crypto import *
-
+from pyttm import __version__
 
 def main():
     try:
