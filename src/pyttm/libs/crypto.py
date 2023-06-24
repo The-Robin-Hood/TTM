@@ -1,25 +1,24 @@
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
+import os
 import hashlib
-
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
 
 def encrypt_text(text: str, secret_key: str):
-    secret_key = secret_key.zfill(16)
-    nonce = get_random_bytes(8)
-    secret_key_to_bytes = secret_key.encode('utf-8')
-    cipher = AES.new(secret_key_to_bytes, AES.MODE_CTR, nonce=nonce)
-    encrypted_text = cipher.encrypt(text.encode('utf-8'))
+    secret_key = secret_key.zfill(16).encode('utf-8')
+    nonce = os.urandom(16)
+    cipher = Cipher(algorithms.AES(secret_key), modes.CTR(nonce), backend=default_backend())
+    encryptor = cipher.encryptor()
+    encrypted_text = encryptor.update(text.encode('utf-8')) + encryptor.finalize()
     return nonce.hex() + encrypted_text.hex()
 
-
 def decrypt_text(encrypted_text, secret_key):
-    nonce = bytes.fromhex(encrypted_text[:16])
-    secret_key = secret_key.zfill(16)
-    encrypted_bytes = bytes.fromhex(encrypted_text[16:])
-    secret_key_to_bytes = secret_key.encode('utf-8')
-    cipher = AES.new(secret_key_to_bytes, AES.MODE_CTR, nonce=nonce)
-    decrypted_text = cipher.decrypt(encrypted_bytes)
-    return decrypted_text.decode('utf-8')
+    nonce = bytes.fromhex(encrypted_text[:32])
+    encrypted_bytes = bytes.fromhex(encrypted_text[32:])
+    secret_key = secret_key.zfill(16).encode('utf-8')
+    cipher = Cipher(algorithms.AES(secret_key), modes.CTR(nonce), backend=default_backend())
+    decryptor = cipher.decryptor()
+    decrypted_bytes = decryptor.update(encrypted_bytes) + decryptor.finalize()
+    return decrypted_bytes.decode('utf-8')
 
 
 def hash_password(password):
