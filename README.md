@@ -12,9 +12,15 @@ Terminal TOTP Manager is a command-line tool for managing Time-based One-Time Pa
 
 - Python 3.x
 
+## Building Standalone Executable
+
+```shell
+pyinstaller ttm.spec
+```
+
 ## Installation
 
-   ```
+   ```shell
    pip install pyttm
    ```
 
@@ -26,7 +32,7 @@ To use TOTP Manager, follow these steps:
 
 2. Run the following command:
 
-   ```
+   ```shell
    ttm [command]
    ```
 

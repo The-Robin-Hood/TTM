@@ -1,3 +1,6 @@
 # __init__.py
 
-__version__ = "0.1.0"
+from pathlib import Path
+__version__ = open(Path(__file__).parent.joinpath('version.txt')).read().strip()
+
+

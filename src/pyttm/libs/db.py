@@ -118,4 +118,4 @@ class SQLiteDB:
             cursor = connection.cursor()
             cursor.execute("INSERT INTO Version (last_check) VALUES (?)", (last_check,))
 
-ConfigDB = SQLiteDB()
+
